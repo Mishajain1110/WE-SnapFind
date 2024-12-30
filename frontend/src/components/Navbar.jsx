@@ -19,6 +19,23 @@ function Navbar() {
                 <img src={logo} alt="Logo" className="navbar-logo"/>
             </Link>
             <ul className="navbar-menu-left">
+                {isAuthorized ? (
+                    <>
+                    <li>
+                        <Link to="/why">Why Us?</Link>
+                    </li>
+                    <li>
+                        <Link to="/about">About</Link>
+                    </li>
+                    <li>
+                        <Link to="/contact">Contact</Link>
+                    </li>
+                    <li>
+                         <Link to="/lost-found">Lost/Found Item Form</Link>
+                    </li>
+                    </>
+                ) : (
+                <>
                 <li>
                     <Link to="/why">Why Us?</Link>
                 </li>
@@ -28,6 +45,8 @@ function Navbar() {
                 <li>
                     <Link to="/contact">Contact</Link>
                 </li>
+                </>
+                )}
             </ul>
             <ul className="navbar-menu-right">
                 {isAuthorized ? (

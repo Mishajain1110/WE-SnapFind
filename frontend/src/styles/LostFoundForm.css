@@ -1,0 +1,92 @@
+body {
+    font-family: 'Arial', sans-serif; 
+    background-color: #f4f4f4; 
+}
+
+.form-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2); 
+    max-width: 500px;
+    width: 100%;
+    margin: 70px auto; 
+    transition: box-shadow 0.3s ease; 
+}
+
+.form-container:hover {
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.3); 
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form h2 {
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+    font-size: 24px; 
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px; 
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.3s ease; 
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #3D56FF; 
+    box-shadow: 0 0 0 2px rgba(61, 86, 255, 0.2);
+}
+
+.form-button {
+    background-color: #3D56FF;
+    color: white;
+    padding: 12px; 
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; 
+}
+
+.form-button:hover {
+    background-color: #2a3bbf;
+}
+
+.loading-indicator {
+    color: #007bff;
+    text-align: center;
+    font-size: 16px; 
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    font-weight: bold; 
+}
+
+.success-message {
+    color: green;
+    text-align: center;
+    font-weight: bold; 
+}

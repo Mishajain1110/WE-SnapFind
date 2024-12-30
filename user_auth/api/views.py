@@ -10,6 +10,9 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from .models import LostFoundItem
+from .serializers import LostFoundItemSerializer
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -66,3 +69,21 @@ def validate_google_token(request):
             return JsonResponse({'detail': 'Invalid JSON.'}, status=400)
     return JsonResponse({'detail': 'Method not allowed.'}, status=405)
     
+class LostFoundItemCreate(generics.CreateAPIView):
+    queryset = LostFoundItem.objects.all()
+    serializer_class = LostFoundItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        item = serializer.save()
+        return Response({'message': 'Item posted successfully!'}, status=201)
+
+class LostFoundItemList(generics.ListAPIView):
+    queryset = LostFoundItem.objects.all()
+    serializer_class = LostFoundItemSerializer
+
+    def get_queryset(self):
+        status = self.request.query_params.get('status', None)
+        if status:
+            return self.queryset.filter(status=status)
+        return self.queryset

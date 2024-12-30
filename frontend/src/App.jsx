@@ -6,6 +6,8 @@ import Home from "./pages/Home"
 import AuthPage from "./pages/AuthPage"
 import { useAuthentication } from "./auth"
 import RedirectGoogleAuth from "./components/GoogleRedirectHandler"
+import LostFoundForm from './components/LostFoundForm';
+import FoundItemsList from './components/FoundItemsList';
 
 function App() {
 
@@ -28,6 +30,9 @@ function App() {
           <Route path="/register" element={<ProtectedRegister />}/>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound/>} />
+          <Route path="/lost-found" element={<LostFoundForm />} />
+          <Route path="/lost-found/list" element={<FoundItemsList />} />
+          <Route path="/found-items" element={<FoundItemsList />} />
         </Routes>
       </BrowserRouter>
     </div>

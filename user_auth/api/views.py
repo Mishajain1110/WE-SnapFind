@@ -13,14 +13,17 @@ import json
 from .models import LostFoundItem
 from .serializers import LostFoundItemSerializer
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 User = get_user_model()
-
 
 class UserCreate(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
 
 class UserDetailView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
@@ -29,6 +32,7 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
 
 @login_required
 def google_login_callback(request):
@@ -42,8 +46,9 @@ def google_login_callback(request):
     if not social_account:
         print("No social account for user:", user)
         return redirect('http://localhost:5173/login/callback/?error=NoSocialAccount')
-    
-    token = SocialToken.objects.filter(account=social_account, account__provider='google').first()
+
+    token = SocialToken.objects.filter(
+        account=social_account, account__provider='google').first()
 
     if token:
         print('Google token found:', token.token)
@@ -53,7 +58,8 @@ def google_login_callback(request):
     else:
         print('No Google token found for user', user)
         return redirect(f'http://localhost:5173/login/callback/?error=NoGoogleToken')
-    
+
+
 @csrf_exempt
 def validate_google_token(request):
     if request.method == 'POST':
@@ -68,7 +74,8 @@ def validate_google_token(request):
         except json.JSONDecodeError:
             return JsonResponse({'detail': 'Invalid JSON.'}, status=400)
     return JsonResponse({'detail': 'Method not allowed.'}, status=405)
-    
+
+
 class LostFoundItemCreate(generics.CreateAPIView):
     queryset = LostFoundItem.objects.all()
     serializer_class = LostFoundItemSerializer
@@ -77,6 +84,7 @@ class LostFoundItemCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         item = serializer.save()
         return Response({'message': 'Item posted successfully!'}, status=201)
+
 
 class LostFoundItemList(generics.ListAPIView):
     queryset = LostFoundItem.objects.all()

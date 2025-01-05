@@ -8,6 +8,9 @@ import { useAuthentication } from "./auth"
 import RedirectGoogleAuth from "./components/GoogleRedirectHandler"
 import LostFoundForm from './components/LostFoundForm';
 import FoundItemsList from './components/FoundItemsList';
+import ProfilePage from "./pages/ProfilePage";
+import AppNavbar from "./components/Navbar"
+// import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
 
@@ -23,7 +26,7 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <Navbar />
+        <AppNavbar />
         <Routes>
           <Route path="/login/callback" element={<RedirectGoogleAuth />} />
           <Route path="/login" element={<ProtectedLogin />}/>
@@ -33,6 +36,7 @@ function App() {
           <Route path="/lost-found" element={<LostFoundForm />} />
           <Route path="/lost-found/list" element={<FoundItemsList />} />
           <Route path="/found-items" element={<FoundItemsList />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,0 +1,85 @@
+{% extends 'base_layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    Lost & Found: Chat Room
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/chat_index_style.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="messaging">
+        <div class="inbox_msg">
+            <div class="inbox_people">
+                <div class="headind_srch">
+                    <div class="recent_heading">
+                        <h3 class='mt-2 text-dark' id='header_msg'>
+                           <b> Chat <i class="fas fa-comments"></i></b>
+                        </h3>
+
+                    </div>
+
+                    <div class="toggle toggle--daynight float-right mt-3">
+                        <input type="checkbox" id="toggle--daynight" class="toggle--checkbox" {% if theme == 'light' %} checked {% endif %}>
+                        <label class="toggle--btn m-0" for="toggle--daynight">
+                            <span class="toggle--feature"></span>
+                        </label>
+                    </div>
+
+                    <div class="srch_bar mt-2">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input id='search_user' type='text' class='form-control' placeholder="Search users">
+                                <span class="input-group-append" id='password_see'>
+                                    <span class="input-group-text">
+                                        <i id='password-eye' class="fa fa-search"></i>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="inbox_chat" id='inbox_chat'>
+                    <!-- Users Show here -->
+                </div>
+            </div>
+            <div class="mesgs">
+                <div class="container-fluid p-0 m-0" style="position: relative;">
+                    <div class="row">
+                        <div class="col">
+                            <div class='my-circle m-0 p-0' style="display: inline-block;">
+                                <img class='rounded-circle' id='chat_to_img' src="{% static 'images/user_default.jpg' %}" height="60px" width="60px">
+                            </div>
+                            <span class='h5 p-0 ml-2' id='chat_to_name' style="position: relative; bottom: 40%;">
+                                <a class="text-decoration-none text-dark" id="chat_to_name_href" href="#">Loading ...</a>
+                            </span>
+                        </div>
+                    </div>
+                    <hr id='mesgs_hr_bottom'>
+                </div>
+                <div class="msg_history" id='msg_history'>
+                    <!-- Chat Messages (History) -->
+
+                </div>
+                <div class="form-group mt-5" id='input_message_box'>
+                    <div class="input-group">
+                        <input type="text" class='form-control' id='send_message_input' placeholder="Type a message...">
+                        <div class="input-group-append" style='cursor: pointer;'>
+                            <span class="input-group-text" id='send_message_btn'>
+                                <i class="fas fa-paper-plane"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'js/chat_index_script.js' %}"></script>
+{% endblock %}

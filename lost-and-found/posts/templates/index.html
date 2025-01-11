@@ -1,0 +1,189 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block title %}
+    Lost & Found : Home
+{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/tempus.css' %}">
+{% endblock %} 
+
+{% block content %}
+    <div class="container">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-lg-7 mb-5">
+                    <h1 class='display-3 font-weight-bold'>
+                        Welcome,
+                        <br>
+                        <span class='text-primary'>
+                            {% if request.user.is_authenticated %}
+                                {{ user }},
+                            {% else %}
+                                User,
+                            {% endif %}
+                        </span>
+                        <br>
+                        to the SnapFind
+                        <br>
+                        <span>website!</span>
+                    </h1>
+                    <div>
+                        <a href="{% url 'create' %}" class='btn btn-primary p-3 mt-3 ml-5'>Create Your Post</a>
+                    </div>
+
+                </div>
+                <div class="col-lg-5 text-center">
+                    <img src="{% static 'images/lost&found.png' %}" class='img-fluid rotate-img'>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4 rotate-img">
+                    <div class="card shadow h-100 py-2" style="border-left:.25rem solid black !important">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-uppercase mb-1">All Found Items</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ founds|length }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-folder-open fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 rotate-img">
+                    <div class="card shadow h-100 py-2" style="border-left:.25rem solid #f0ad4e !important">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-uppercase mb-1">In Progress</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ active }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-hourglass-half fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 rotate-img">
+                    <div class="card shadow h-100 py-2" style="border-left:.25rem solid #5cb85c !important">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-uppercase mb-1">Returned Successfully</div>
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ closed }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 rotate-img">
+                    <div class="card shadow h-100 py-2" style="border-left:.25rem solid #d9534f !important">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-uppercase mb-1">Lost Items Notices</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ losts|length }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-search fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h1 class='text-center my-5'>
+            <b> All Posts </b>
+            <span class="badge badge-pill badge-dark text-light"> {{ all }} </span>
+        </h1>
+
+        <div class="container">
+            <div class="form-row mb-3">
+                <div class="col-4">
+                    <label for="">Post Title</label>
+                    <input type="text" class="form-control" placeholder="Post Title" id='title'>
+                </div>
+                <div class="col-4">
+                    <label for="">Location</label>
+                    <input type="text" class="form-control" placeholder="Location" id='location'>
+                </div>
+                <div class="col-4">
+                    <label>Date</label>
+                    <div class="input-group date" id="datetimepicker" data-target-input="nearest">
+                        <input placeholder="Not specified" id='datetimepicker' type="text" class="form-control datetimepicker-input" 
+                        data-toggle='datetimepicker' data-target="#datetimepicker"/>
+                        <div class="input-group-append" style="cursor: pointer;" onclick="clearDate()">
+                            <div class="input-group-text"><i class="fa fa-times"></i></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-row mb-5"> 
+                <div class="col-4">
+                    <label for="">Item Type</label>
+                    <select class='form-control' id='assetType'>
+                        {% comment %} {% for asset in assetType %}
+                            <option value="{{ asset.id }}">{{ asset }}</option>
+                        {% endfor %} {% endcomment %}
+                    </select>
+                </div>
+                <div class='col-4'>
+                    <label>Post Type</label>
+                    <select class='form-control' id="type">
+                        <option value="-1" selected>All</option>
+                        <option value="found">Found Item</option>
+                        <option value="lost">Looking for Item</option>
+                    </select>
+                </div>
+                <div class='col-4'>
+                    <label>Post Status</label>
+                    <select class='form-control' id="is_active">
+                        <option value="-1" selected>All</option>
+                        <option value="1">Open</option>
+                        <option value="0">Closed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row" id='all_post'>
+                {% if posts|length == 0 %}
+                    <div class='col-lg-12 jumbotron text-center border border-dark'>
+                        <img src="{% static 'images/post.png' %}" width='15%' class='mb-5'>
+                        <h4>No Posts</h4>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tempus.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/local.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/index_script.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'base_layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    Lost & Found : {{ user.username }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1><b> Profile of {{ user.username }} <i class="fas fa-id-card-alt"></i></b> </h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col mb-4 rotate-img">
+                            <div class="card shadow h-100 py-2" style="border-left:.25rem solid black !important">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="font-weight-bold text-uppercase mb-1">Total Posts</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                {{ posts|length }}
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-archive fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col mb-4 rotate-img">
+                            <div class="card shadow h-100 py-2" style="border-left:.25rem solid #5cb85c !important">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="font-weight-bold text-uppercase mb-1">Active Posts</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                {{ active }}
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-check-circle fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col mb-4 rotate-img">
+                            <div class="card shadow h-100 py-2" style="border-left:.25rem solid #d9534f !important">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="font-weight-bold text-uppercase mb-1">Closed Posts</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                {{ closed }}
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-times-circle fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        {% if posts|length == 0 %}
+                            <div class='col-lg-12 jumbotron text-center border border-dark mt-5'>
+                                <img src="{% static 'images/post.png' %}" width='15%' class='mb-5'>
+                                <h4>No Posts</h4>
+                            </div>
+                        {% else %}
+                            <div class="col-12 text-center">
+                                <h4 class='font-weight-bold'> Types of Owned Posts </h4>
+                                <div class='col-lg-12 jumbotron text-center border border-dark mt-4'>
+                                    <canvas id='Chart'></canvas>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-5">
+                <div class="card w-100 text-dark mycard">
+                    <div class="wrapper">
+                        <img class="card-img-top" src="{{ user.userprofile.avatar.url }}" id="avatar_preview">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <b id='username'>{{ user.username }}</b>
+                        </h5>
+                        <p class="card-text">
+                            <p>
+                                <span id='first_name'> {{ user.first_name }} </span>
+                                <span id='last_name'> {{ user.last_name }} </span>
+                            </p>
+                            <p>Email: <span id='email'> {{ user.email }} </span></p>
+                        </p>
+                    </div>
+                    <div class="container mb-3 ml-1">
+                        <p class="card-text">
+                            <span class="badge badge-pill badge-success" id='faculty'> {{ user.userprofile.faculty }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            <b>Joined on: </b> {{ user.date_joined|date:"d F Y" }}
+                            <br>
+                            <b>Time: </b> {{ user.date_joined|date:"H:i" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+
+    <!-- Link js Chart -->
+    <script src="{% static 'js/chart.min.js' %}"></script>
+
+    <script>
+        Chart.defaults.global.defaultFontFamily = 'Kanit', 'sans-serif';
+        let chart = document.getElementById('Chart').getContext('2d')
+
+        let createChart = new Chart(chart, {
+            type: 'pie',
+            data:{
+                labels: ['Found Items', 'Lost Items'],
+                datasets: [{
+                    data: [
+                        "{{ founds|length }}",
+                        "{{ losts|length }}",
+                    ],
+                    backgroundColor: [
+                        '#47B39C',
+                        '#EC6B56'
+                    ],
+                    borderWidth: 1,
+                    borderColor: '#777',
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: 'black'
+                }]
+            },
+            options: {
+                legend:{
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        fontColor: '#000'
+                    },
+                },
+            }
+        })
+
+    </script>
+
+{% endblock %}

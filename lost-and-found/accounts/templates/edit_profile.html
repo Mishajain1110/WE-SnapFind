@@ -1,0 +1,130 @@
+{% extends 'base_layout.html' %}
+
+{% block title %}
+    Lost & Found: Edit Profile
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class='my-5'> <b>Edit Profile: {{ user.username }} <i class="fas fa-id-card-alt"></i></b> </h1>
+        <form action="{% url 'edit_profile' %}" enctype="multipart/form-data" method='POST'>
+        {% csrf_token %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mb-5">
+                        {% if success %}
+                            <div class="alert alert-success" role="alert">
+                                <i class="fa fa-exclamation-circle mr-1"></i> {{ success }}
+                            </div>
+                        {% endif %}
+                        <div class="form-row">
+                            {% for each_form in form %}
+                                <div class="form-group col-md-6 mb-4">
+                                    <label for="{{ each_form.id_for_label }}"> {{ each_form.label }}</label>
+                                    {{ each_form }}
+                                    <small class='text-danger'> {{ each_form.errors.0 }} </small>
+                                </div>
+                            {% endfor %}
+                            <div class="form-group col-md-6">
+                                <label>Faculty</label>
+                                <select name="faculty" class='form-control' id="id_faculty">
+                                    {% for faculty in facultys %}
+                                        {% if faculty != user.userprofile.faculty %}
+                                            <option value="{{ faculty.id }}">{{ faculty }}</option>
+                                        {% else %}
+                                            <option selected value="{{ faculty.id }}"> {{ user.userprofile.faculty }} </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6 mb-5">
+                                <label>Profile Picture</label>
+                                <div class="custom-file">
+                                    <input type="file" class='custom-file-input' name='picture' id="avatar">
+                                    <label class="custom-file-label" for="avatar">Upload File</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class='btn btn-primary'>Save Changes</button>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card h-100 w-100 text-dark mycard">
+                            <div class="wrapper">
+                                <img class="card-img-top" src="{{ user.userprofile.avatar.url }}" id="avatar_preview">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <b id='username'> {{ user.username }} </b>
+                                </h5>
+                                <p class="card-text">
+                                    <p>
+                                        <span id='first_name'>{{ user.first_name }}</span>
+                                        <span id='last_name'>{{ user.last_name }}</span>
+                                    </p>
+                                    <p>Email: <span id='email'> {{ user.email }} </span></p>
+                                </p>
+                            </div>
+                            <div class="container mb-3 ml-1">
+                                <p class="card-text">
+                                    <span class="badge badge-pill badge-success" id='faculty'>{{ user.userprofile.faculty }}</span>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">
+                                    <b>Member Since: </b> {% now "d F Y" %}
+                                    <br>
+                                    <b>Time: </b> {% now "H:i" %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block script %}
+<script>
+    /* Read URL function */
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#avatar_preview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    /* Bind: picture (avatar) */
+    $("#avatar").change(function () {
+        readURL(this);
+        var fileName = $(this).val().split('\\').pop();
+        $(this).next('.custom-file-label').html(fileName);
+    });
+
+    /* Bind: first_name */
+    $("#id_first_name").on('input', function () {
+        var text = $("#id_first_name").val();
+        $("#first_name").html(text);
+    });
+
+    /* Bind: last_name */
+    $("#id_last_name").on('input', function () {
+        var text = $("#id_last_name").val();
+        $("#last_name").html(text);
+    });
+
+    /* Bind: email */
+    $("#id_email").on('input', function () {
+        var text = $("#id_email").val();
+        $("#email").html(text);
+    });
+
+    /* Bind: faculty */
+    $("#id_faculty").on('input', function () {
+        var text = $("#id_faculty").find(":selected").text();
+        $("#faculty").html(text);
+    });
+</script>
+{% endblock %}

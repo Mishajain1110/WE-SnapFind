@@ -1,0 +1,311 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block title %}
+    Lost & Found : {{ post }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <h1 class='mt-2'>
+            <b>Post : {{ post }} <i class="fas fa-archive"></i></b>
+        </h1>
+        <span class='ml-1'>By : {% if post.user %} <a class='text-decoration-none' href="{% url 'profile' post.user.id %}"> {{ post.user.username }} </a> {% else %} Anonymous User {% endif %} </span>
+        <div class="row">
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        {% if post.is_active == False %}
+                            <p class='h6 ml-2'>Additional details</p>
+                            <textarea class='form-control h-50 bg-light' style='resize: none;' readonly>{{ post.desc }}</textarea>
+                            {% if post.type == 'found' %}
+                                <p class='mt-3'>Details about the person who took the item</p>
+                            {% else %}
+                                <p class='mt-3'>Details about the person who found the item</p>
+                            {% endif %}
+                            <textarea class='form-control bg-light' style="height: 30%; resize:none;" readonly >{{ post.take_information }}</textarea>
+                        {% else %}
+                            <p class='h6 ml-2'>Additional details</p>
+                            <textarea class='form-control bg-light' style='resize: none; height: 50%;' readonly>{{ post.desc }}</textarea>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card w-100 text-dark mycard">
+                            <div class="wrapper">
+                                {% if post.postpicture_set.all|length == 0 %}
+                                    <img class="card-img-top" src="{% static 'images/post_default.jpg' %}">
+                                {% else %}
+                                    <img class="card-img-top" src="{{ post.postpicture_set.all.0.picture.url }}">
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <b id='title'> {{ post.title|truncatechars:20 }} </b>
+                                </h5>
+                                <div class="card-text">
+                                    <p id='desc'> {{ post.desc|truncatechars:15 }} </p>
+                                    <p class='m-0'>
+                                        <small>
+                                            <b>Item Type: </b> <span id='assetType'> {{ post.assetType }} </span>
+                                        </small>
+                                    </p>
+                                    <p class='m-0'>
+                                        <small>
+                                            <b>Location: </b> <span id='location'> {{ post.location }} </span>
+                                        </small>
+                                    </p>
+                                    <p class='m-0'>
+                                        <small>
+                                            <b>Date and Time: </b> <span id='date_time'> {{ post.date_time|date:"d/m/Y H:i" }} </span>
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="container mb-3 ml-1">
+                                <p class="card-text">
+                                    {% if post.type == 'found' %}
+                                        <span class="badge badge-pill badge-success text-light" id='type'>Found Lost Item</span>
+                                    {% else %}
+                                        <span class="badge badge-pill badge-danger text-light" id='type'>Looking for Item</span>
+                                    {% endif %}
+
+                                    {% if post.is_active == False %}
+                                        <span class="badge badge-pill badge-dark text-light">Closed</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">
+                                    <b>Contact Number: </b> <span id='contact1'> {{ post.contact1 }} </span>
+                                    <br>
+                                    <b>Email: </b> <span id='contact2'> {{ post.contact2 }} </span>
+                                    <br>
+                                    <b>By: </b> {% if post.user %} {{ post.user.username }} {% else %} Anonymous User {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="container">
+                            <h1 class="font-weight-bold text-center text-lg-left mt-4 mb-0">Images <i class="fas fa-images"></i> </h1>
+                            <hr class="mt-2 mb-5">
+                            {% if post.postpicture_set.all|length == 0 %}
+                                <div class="jumbotron col-12 text-center bg-light" id='no-upload'>
+                                    <h1>
+                                        No images uploaded <br>
+                                        <i class="fas fa-not-equal mt-3"></i>
+                                    </h1>
+                                </div>
+                            {% else %}
+                                <div class="row text-center text-lg-left">
+                                    {% for picture in post.postpicture_set.all %}
+                                        <div class="col-3">
+                                            <div class="card w-100 mycard mb-5">
+                                                <div class="wrapper">
+                                                    <img src="{{  picture.picture.url }}" class="card-img-top">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-5">
+                    <div class="col">
+                        <div class="container">
+                            <h1 class="font-weight-bold text-center text-lg-left mt-4 mb-0">Comments <i class="fas fa-comment-dots"></i> </h1>
+                            <hr class="mt-2 mb-5">
+
+
+                            <div class="media">
+                                <div class="my-circle mr-3">
+                                    {% if request.user.is_authenticated %}
+                                        <img class="rounded-circle" src="{{ request.user.userprofile.avatar.url }}">
+                                    {% else %}
+                                        <img class="rounded-circle" src="{% static 'images/user_default.jpg' %}">
+                                    {% endif %}
+                                </div>
+                                <div class="media-body">
+                                    <h5 class="mt-0 mb-3 text-primary">
+                                        <span class='font-weight-bold text-dark'>
+                                            {% if request.user.is_authenticated %}
+                                                {{ request.user }}
+                                            {% else %}
+                                                Anonymous User
+                                            {% endif %}
+                                        </span>
+                                    </h5>
+                                    <textarea id='comment_inp' class='form-control' cols="30" rows="5" style="resize: none;" placeholder="Type a message..."></textarea>
+                                </div>
+                            </div>
+
+
+                            <button class='btn btn-primary float-right mt-4' id='comment_btn'>Comment</button>
+
+                            <div class="container-fluid mt-5 pt-5" id='comments'>
+                                <!-- Comment'll be here -->
+
+                                <div class="media my-4">
+                                    <div class="my-circle mr-3">
+                                        <img class="rounded-circle" src="{% static 'images/user_default.gif' %}">
+                                    </div>
+                                    <div class="media-body">
+                                        <h5 class="mt-0 text-primary">
+                                            <a href="#">Loading ...</a>
+                                            <small class='float-right text-muted'>Loading ...</small>
+                                        </h5>
+                                        <small>Loading ...</small>
+                                    </div>
+                                </div>
+                                <hr>
+
+
+
+                            </div>
+
+                            <div class='container'>
+                                <span class='h6' style="cursor: pointer;" id='more_comment_btn' onclick="loadmore()">See more comments</span>
+                                <span class="float-right" id='comments_length'> </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
+
+    var data = [];
+    var countComment = 0;
+
+    function loadMore() {
+        if (countComment < data.length) {
+            for (let i = 0; i < 5; i++) {
+                if (countComment >= data.length) {
+                    break;
+                }
+                addComment(data[countComment], false);
+                countComment++;
+            }
+        }
+        document.getElementById('comments_length').innerText = countComment + ' of ' + data.length;
+
+        if (countComment === 0) {
+            document.getElementById('comments_length').innerText = '';
+            document.getElementById('more_comment_btn').innerText = '';
+        }
+    }
+
+    function initialize() {
+        axios.get('/comment_api/' + {{post.id}} + '/')
+            .then(function (response) {
+                countComment = 0;
+                document.getElementById('comments').innerHTML = '';
+                data = response.data;
+                loadMore();
+            });
+    }
+
+    function addComment(comment, first = false) {
+       
+        let div1 = document.createElement('div');
+        div1.setAttribute('class', 'media my-4');
+
+        let div2 = document.createElement('div');
+        div2.setAttribute('class', 'my-circle mr-3');
+
+        let img = document.createElement('img');
+        img.setAttribute('class', 'rounded-circle');
+        if (comment.avatar) {
+            img.setAttribute('src', comment.avatar);
+        } else {
+            img.setAttribute('src', '{% static "images/user_default.jpg" %}');
+        }
+
+        let div3 = document.createElement('div');
+        div3.setAttribute('class', 'media-body');
+
+        let h5 = document.createElement('h5');
+        h5.setAttribute('class', 'mt-0 text-light');
+
+        let a = document.createElement('a');
+        if (comment.user) {
+            a.setAttribute('href', '/accounts/' + comment.user + '/');
+            a.setAttribute('class', 'text-decoration-none font-weight-bold');
+            a.innerText = comment.username;
+        } else {
+            a.setAttribute('class', 'text-dark font-weight-bold');
+            a.innerText = 'General User';
+        }
+
+        let small1 = document.createElement('small');
+        small1.setAttribute('class', 'float-right text-muted');
+        let datetime = new Date(comment.create_at);
+        datetime = ((datetime.getDate() < 10 ? '0' : '') + datetime.getDate()) + '/' + 
+            ((datetime.getMonth() + 1 < 10 ? '0' : '') + (datetime.getMonth() + 1)) + '/' +
+            datetime.getFullYear() + ' ' + 
+            ((datetime.getHours() < 10 ? '0' : '') + datetime.getHours()) + ':' + 
+            ((datetime.getMinutes() < 10 ? '0' : '') + datetime.getMinutes());
+        small1.innerText = datetime;
+
+        h5.append(a);
+        h5.append(small1);
+
+        div3.append(h5);
+
+        let small2 = document.createElement('small');
+        small2.innerText = comment.msg;
+
+        div3.append(small2);
+
+        div2.append(img);
+
+        div1.append(div2);
+        div1.append(div3);
+
+        let comments = document.getElementById('comments');
+
+        if (first) {
+            comments.prepend(document.createElement('hr'));
+            comments.prepend(div1);
+        } else {
+            comments.append(div1);
+            comments.append(document.createElement('hr'));
+        }
+
+        document.getElementById('comments_length').innerText = countComment + ' of ' + data.length;
+        document.getElementById('more_comment_btn').innerText = 'View More Comments';
+    }
+
+    $('#comment_btn').on('click', function (e) {
+        let message = $('#comment_inp').val();
+        if (message.trim() !== "") {
+            axios.post('/comment_api/' + {{post.id}} + '/', {
+                msg: message,
+            }).then(function (response) {
+                let comment = response.data;
+                $('#comment_inp').val('');
+                countComment++;
+                data.unshift(comment);
+                addComment(comment, true);
+            });
+        }
+    });
+
+    initialize();
+</script>
+{% endblock %}

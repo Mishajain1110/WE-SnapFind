@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css?family=Kanit&display=swap');
+
+/* Scroll bar */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px transparent;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #999999;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #999999;
+}
+
+*{
+    font-family: 'Kanit', sans-serif;
+    word-wrap: break-word;
+    padding: 0;
+    margin: 0;
+}
+
+body, html {
+    height: 100%;
+}
+
+body{
+    animation: fadein .5s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.navbar-nav.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+}
+
+/* card hover animation */
+.mycard{
+    transition: .2s;
+}
+
+.mycard:hover{
+    box-shadow: 0 4px 8px 0 gray;
+    margin-top: -2%;
+}
+
+/* make card (img) to have same height */
+.wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.wrapper:after {
+    content: '';
+    display: block;
+    padding-top: 100%;
+}
+
+.wrapper img {
+    width: auto;
+    height: 100%;
+    max-width: none;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+/* dropdown padding */
+.dropdown-menu {
+    padding-top: 0;
+    padding-bottom: 0;
+ }
+
+ .dropdown-menu > a:first-child {
+    margin-top: 15px;
+ }
+
+ .dropdown-menu > a:last-child {
+    margin-bottom: 15px;
+ }
+
+ /* top right btn on card */
+ .top-right-btn{
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(50%,-50%);
+    z-index: 100;
+}
+
+/* rotate image */
+.rotate-img{
+    transition: .3s;
+}
+
+.rotate-img:hover{
+    transform: rotate(5deg);
+}
+
+/* make img rounded-circle with responsive */
+.my-circle {
+    position: relative;
+    width: 75px;
+    height: 75px;
+    overflow: hidden;
+}
+
+.my-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff;
+    background-color: gray;
+}
+

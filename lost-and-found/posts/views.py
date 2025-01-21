@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from .models import Post, PostPicture, AssetType, Comment
 from django.views import View
 from django.forms import formset_factory
-
+from accounts.models import Reward
 from .serializers import PostSerializer, AssetTypeSerializer, CommentSerializer
 
 from rest_framework.views import APIView
@@ -130,6 +130,10 @@ class CreateView(View):
             post = form.save(commit=False)
             if request.user.is_authenticated:
                 post.user = request.user
+                if post.type == 'found':  
+                    reward, created = Reward.objects.get_or_create(user=request.user)
+                    reward.points += 10  
+                    reward.save()
             else:
                 post.key = request.POST.get('key')
                 # validate key

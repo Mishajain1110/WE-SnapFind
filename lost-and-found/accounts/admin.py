@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, Faculty
+from .models import UserProfile, Faculty, Reward
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
@@ -20,5 +20,9 @@ class FacultyAdmin(admin.ModelAdmin):
         'faculty_name'
     ]
 
+class RewardAdmin(admin.ModelAdmin):
+    list_display = ['user', 'points', 'created_at']
+
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Faculty, FacultyAdmin)
+admin.site.register(Reward, RewardAdmin)

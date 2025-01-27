@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import SignupForm, MyPasswordChangeForm, EditProfileForm
-from .models import Faculty, UserProfile
+from .models import Faculty, UserProfile, Reward
 from posts.models import Post
 from chats.models import Chat
 from django.contrib.auth.models import User
@@ -226,3 +226,8 @@ class EditProfileView(View):
                 'form': form,
                 'facultys': Faculty.objects.all()
             })
+
+@login_required
+def rewards_view(request):
+    reward, created = Reward.objects.get_or_create(user=request.user)
+    return render(request, 'rewards.html', {'rewards': reward})

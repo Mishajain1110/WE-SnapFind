@@ -12,85 +12,113 @@ $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Const
         close: 'fas fa-times'
     }
 });
+$(document).ready(function () {
+    // Initialize datetime picker
+    $('#datetimepicker').datetimepicker({
+        locale: 'th',
+        format: 'L',
+        useCurrent: false,
+    });
 
-/* initial datetime picker */
-$('#datetimepicker').datetimepicker({
-    locale: 'th',
-    format: 'L',
-    useCurrent: false
+    // Initialize filter values
+    let search_title = '';
+    let search_location = '';
+    let search_assetType = -1;
+    let search_date = '';
+    let search_type = -1;
+    let search_is_active = -1;
+
+    // Fetch posts and initialize the page
+    initialize();
+
+    // Event listener for Filter button
+    $('#filterButton').on('click', function () {
+        // Get filter values
+        search_title = $('#title').val();
+        search_location = $('#location').val();
+        search_assetType = $('#assetType').val();
+        search_type = $('#type').val();
+        search_is_active = $('#is_active').val();
+
+        // Fetch and display filtered posts
+        initialize();
+    });
+
+    // Function to fetch and display posts
+    function initialize() {
+        axios.get('/post_api/', {
+            params: {
+                search_title: search_title,
+                search_location: search_location,
+                search_assetType: search_assetType,
+                search_date: search_date,
+                search_type: search_type,
+                search_is_active: search_is_active,
+            },
+        })
+            .then(function (response) {
+                const data = response.data;
+                const posts = data[0];
+                const assetTypes = data[1];
+
+                // Clear existing posts
+                $('#all_post').html('');
+
+                // Populate asset type dropdown
+                $('#assetType').html('<option value="-1">All Item Types</option>');
+                assetTypes.forEach(asset => {
+                    $('#assetType').append(`<option value="${asset.id}">${asset.name}</option>`);
+                });
+
+                // Render posts
+                if (posts.length === 0) {
+                    $('#all_post').html(`
+                        <div class='col-lg-12 jumbotron text-center border border-dark'>
+                            <img src="/static/images/post.png" width='15%' class='mb-5'>
+                            <h4>No Posts</h4>
+                        </div>
+                    `);
+                } else {
+                    posts.forEach(post => {
+                        const imageUrl = post.pictures.length > 0 ? post.pictures[0].picture : '/static/images/post_default.gif';
+                        const postHtml = `
+                            <div class='col-lg-3 my-3'>
+                                <div class="card h-100 w-100 text-dark mycard">
+                                    <a href="/detail/${post.id}/">
+                                        <div class="wrapper">
+                                            <img class="card-img-top" src="${imageUrl}" alt="${post.title}">
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title"><b>${post.title}</b></h5>
+                                            <p class="card-text"><small>${post.location}</small></p>
+                                            <p class="card-text">
+                                                <span class="badge badge-pill ${post.type === 'found' ? 'badge-success' : 'badge-danger'}">
+                                                    ${post.type === 'found' ? 'Found' : 'Lost'}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        $('#all_post').append(postHtml);
+                    });
+                }
+            })
+            .catch(function (error) {
+                console.error('Error fetching posts:', error);
+            });
+    }
+
+    // Clear Date Functionality
+    function clearDate() {
+        $('#datetimepicker').datetimepicker('clear');
+        search_date = '';
+        initialize();
+    }
 });
+/* initial datetime picker */
 
-
-var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-search_title = ''
-search_location = ''
-search_assetType = -1
-search_date = ''
-search_type = -1
-search_is_active = -1
-loaded = false
-function initialize(){
-    axios.get('/post_api/' +
-        '?search_title=' + search_title +
-        '&search_location=' + search_location +
-        '&search_assetType=' + search_assetType +
-        '&search_date=' + search_date +
-        '&search_type=' + search_type +
-        '&search_is_active=' + search_is_active
-    ).then(function (response) {
-        // handle success
-        data = response.data
-
-        posts = data[0]
-        assetTypes = data[1]
-
-        // wipe page
-        $('#all_post').html('')
-        $('#assetType').html('')
-
-        createAssetTypeChoice(assetTypes)
-
-        for (i = 0; i < posts.length; i++){
-            if (posts[i].pictures.length >= 1){
-                url =  posts[i].pictures[0].picture
-            }
-            else{
-                url = null;
-            }
-            createCard(posts[i].id, url, posts[i].title, posts[i].desc, posts[i].type,
-                posts[i].assetType, posts[i].location, posts[i].date_time,
-                posts[i].contact1, posts[i].contact2, posts[i].user, posts[i].is_active)
-        }
-
-        if (posts.length == 0){ // if not have any posts
-            /*
-            <div class='col-lg-12 jumbotron text-center border border-dark'>
-                <img src="{% static 'images/post.png' %}" width='15%' class='mb-5'>
-                <h4>No posts</h4>
-            </div>
-            */
-            let div = document.createElement('div')
-            div.setAttribute('class', 'col-lg-12 jumbotron text-center border border-dark')
-
-            let img = document.createElement('img')
-            img.setAttribute('src', '/static/images/post.png')
-            img.setAttribute('width', '15%')
-            img.setAttribute('class', 'mb-5')
-
-            let h4 = document.createElement('h4')
-            h4.innerText = 'No posts'
-
-            div.append(img)
-            div.append(h4)
-
-            document.getElementById('all_post').append(div)
-        }
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error);
-    })
-}
 
 function createCard(id, url, title, desc, type, assetType, location, date_time, contact1, contact2, user, is_active){
     let a = document.createElement('a')

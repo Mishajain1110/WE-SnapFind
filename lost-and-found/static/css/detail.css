@@ -1,0 +1,56 @@
+/* Carousel Styling */
+#imageCarousel {
+    border: 1px solid #a81414;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    height: 400px; /* Adjust as needed */
+    object-fit: cover;
+}
+
+/* Item Details Styling */
+.item-details p {
+    margin: 0.5rem 0;
+}
+
+.additional-details textarea {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+.contact-info p {
+    margin: 0.5rem 0;
+}
+
+/* Comments Section Styling */
+#comments .media {
+    margin-bottom: 1.5rem;
+}
+
+#comments .media img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+/* Custom CSS for black carousel arrows */
+/* .carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(100%); /* This will make the arrows black */
+/* } */ 
+
+
+/* Optional: Add a background to the arrows for better visibility */
+.carousel-control-prev,
+.carousel-control-next {
+    background-color: rgba(0, 0, 0, 0.1); /* Light background */
+    width: 40px; /* Adjust width */
+    height: 40px; /* Adjust height */
+    border-radius: 50%; /* Make it circular */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+}

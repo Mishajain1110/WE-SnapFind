@@ -163,7 +163,7 @@ class CreateView(View):
 
 
 class DetailView(View):
-    template_name = 'detail.html'
+    template_name = 'detail1.html'
 
     def get(self, request, post_id):
         post = Post.objects.get(id=post_id)

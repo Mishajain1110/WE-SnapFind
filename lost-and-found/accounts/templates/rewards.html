@@ -6,5 +6,35 @@
 
 {% block content %}
 <h1>My Rewards</h1>
-<p>You have {{ rewards.points }} points.</p>
+<p>You have <strong>{{ rewards.points }}</strong> points.</p>
+
+<h2>Your Badges</h2>
+<div class="badges">
+    {% for badge in rewards.badges.all %}
+        <div class="badge">
+            <img src="{{ badge.image.url }}" alt="{{ badge.name }}">
+            <p>{{ badge.name }}</p>
+        </div>
+    {% empty %}
+        <p>No badges earned yet!</p>
+    {% endfor %}
+</div>
+
+<style>
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.badge {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+}
+.badge img {
+    width: 50px; 
+    height: 50px; 
+}
+</style>
 {% endblock %}

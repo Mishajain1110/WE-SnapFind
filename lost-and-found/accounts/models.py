@@ -1,8 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-# accounts app
-
-# Create your models here.
 
 class Faculty(models.Model):
     faculty_name = models.CharField(max_length=255)
@@ -18,9 +15,18 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
     
+class Badge(models.Model):
+    name = models.CharField(max_length=255)
+    points_required = models.IntegerField()
+    image = models.ImageField(upload_to='badges/')
+
+    def __str__(self):
+        return self.name
+    
 class Reward(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)
+    badges = models.ManyToManyField(Badge, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

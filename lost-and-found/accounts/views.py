@@ -146,7 +146,6 @@ class ProfileView(View):
         }
         return render(request, self.template_name, context)
 
-
 @login_required
 def logout_view(request):
     logout(request)

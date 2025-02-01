@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 class SignupForm(UserCreationForm):
 
     username = forms.CharField(
-        widget = forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Username'}),
-        label = 'Username'
+        widget = forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Roll Number'}),
+        label = 'Roll Number'
     )
     first_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),

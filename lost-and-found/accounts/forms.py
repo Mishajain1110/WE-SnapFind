@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+
+
 class SignupForm(UserCreationForm):
     ALLOWED_EMAILS = {
         "vrsec.ac.in", "iiti.ac.in", "pesu.pes.edu", "vnrvjiet.in"  # Add more institutional domains
@@ -10,10 +12,10 @@ class SignupForm(UserCreationForm):
     TEAM_EMAILS = {
         "dnandinich@gmail.com", "mishajain1110@gmail.com", "praneethakalbhavi@gmail.com", "sirivoore249@gmail.com"
     }
-    
+
     username = forms.CharField(
         widget = forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Username'}),
-        label = 'Username'
+        label = 'Roll Number'
     )
     first_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
@@ -70,6 +72,12 @@ class MyPasswordChangeForm(PasswordChangeForm):
     )
 
 class EditProfileForm(forms.ModelForm):
+    ALLOWED_EMAILS = {
+        "vrsec.ac.in", "iiti.ac.in", "pesu.pes.edu", "vnrvjiet.in"  # Add more institutional domains
+    }
+    TEAM_EMAILS = {
+        "dnandinich@gmail.com", "mishajain1110@gmail.com", "praneethakalbhavi@gmail.com", "sirivoore249@gmail.com"
+    }
     first_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
         max_length=32,
@@ -85,7 +93,15 @@ class EditProfileForm(forms.ModelForm):
         max_length=64,
         label='Email'
     )
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        domain = email.split("@")[-1]
 
+        if domain not in self.ALLOWED_EMAILS and email not in self.TEAM_EMAILS:
+            raise ValidationError("Only institutional or team member emails are allowed.")
+
+        return email
+    
     class Meta:
         model = User
         fields = ("first_name", "last_name", "email")

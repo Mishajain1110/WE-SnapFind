@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import SignupForm, MyPasswordChangeForm, EditProfileForm
-from .models import Faculty, UserProfile, Reward
+from .models import Faculty, UserProfile, Reward, Badge
 from posts.models import Post
 from chats.models import Chat
 from django.contrib.auth.models import User
@@ -231,4 +231,13 @@ class EditProfileView(View):
 @login_required
 def rewards_view(request):
     reward, created = Reward.objects.get_or_create(user=request.user)
-    return render(request, 'rewards.html', {'rewards': reward})
+    upcoming_badges = Badge.objects.filter(points_required__gt=reward.points).order_by('points_required')[:4]
+    top_users = Reward.objects.select_related('user').order_by('-points')[:5]
+    print("hiiiiiiiiiii", top_users)
+    context = {
+        'rewards': reward,
+        'upcoming_badges': upcoming_badges,
+        'top_users': top_users,
+    }
+
+    return render(request, 'rewards.html', context)

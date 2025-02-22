@@ -47,8 +47,8 @@
                     <!-- Users Show here -->
                 </div>
             </div>
-            <div class="mesgs">
-                <div class="container-fluid p-0 m-0" style="position: relative;">
+            <div class="mesgs" style="height: 100%; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;">
+                <div class="container-fluid p-0 m-0" style="position: relative">
                     <div class="row">
                         <div class="col">
                             <div class='my-circle m-0 p-0' style="display: inline-block;">
@@ -65,7 +65,7 @@
                     <!-- Chat Messages (History) -->
 
                 </div>
-                <div class="form-group mt-5" id='input_message_box'>
+                <div class="form-group mt-5" id='input_message_box' style="position: relative; margin-top: auto; padding: 5px; background: #fff; z-index: 10; width: 100%; height: 100px;">
                     <div class="input-group">
                         <input type="text" class='form-control' id='send_message_input' placeholder="Type a message...">
                         <div class="input-group-append" style='cursor: pointer;'>

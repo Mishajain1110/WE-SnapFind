@@ -130,6 +130,7 @@ class ProfileView(View):
         posts = Post.objects.filter(user=user)
         founds = Post.objects.filter(user=user, type='found')
         losts = Post.objects.filter(user=user, type='lost')
+        reward, created = Reward.objects.get_or_create(user=request.user)
         closed = 0
         for post in posts:
             if post.is_active == False:
@@ -140,10 +141,10 @@ class ProfileView(View):
             'closed': closed,
             'active': len(posts) - closed,
             'founds': founds,
-            'losts': losts
+            'losts': losts,
+            'rewards': reward
         }
         return render(request, self.template_name, context)
-
 
 @login_required
 def logout_view(request):

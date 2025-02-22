@@ -455,8 +455,6 @@ $('#toggle--daynight').on('change', function(e){
 
 
 })
-
-
 initialize();
 
 setInterval(function(){

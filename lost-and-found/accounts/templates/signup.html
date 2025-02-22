@@ -33,6 +33,11 @@
                                     <div class="form-group col-md-6 mb-4">
                                         <label for="{{ each_form.id_for_label }}"> {{ each_form.label }}</label>
                                         {{ each_form }}
+                                        <!-- email error -->
+                                        {% if each_form.name == "email" %}
+                                            <small id="email-error" class="text-danger"></small> 
+                                        {% endif %}
+
                                         <small class='text-danger'> {{ each_form.errors.0 }} </small>
                                     </div>
                                 {% endif %}
@@ -98,6 +103,24 @@
 {% block script %}
 <script>
     /* read URL function */
+    document.getElementById("id_email").addEventListener("input", function () {
+        const allowedDomains = ["vrsec.ac.in", "iiti.ac.in", "pesu.pes.edu", "vnrvjiet.in"]; // Add more institutions
+        const teamEmails = ["dnandinich@gmail.com", "mishajain1110@gmail.com", "praneethakalbhavi@gmail.com", "sirivoore249@gmail.com"]; // Add team members
+
+        const email = this.value.trim();
+        const emailError = document.getElementById("email-error");
+
+        if (email.includes("@")) {
+            const domain = email.split("@")[1];
+
+            if (!allowedDomains.includes(domain) && !teamEmails.includes(email)) {
+                emailError.textContent = "Only institutional or team member emails are allowed.";
+            } else {
+                emailError.textContent = "";
+            }
+        }
+    });
+
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -118,7 +141,7 @@
     /* Bind: username */
     $("#id_username").on('input', function () {
         var text = $("#id_username").val();
-        $("#username").html(text);
+        $("#rollnumber").html(text);
     });
 
     /* Bind: first_name */

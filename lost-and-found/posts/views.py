@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from .models import Post, PostPicture, AssetType, Comment
 from django.views import View
 from django.forms import formset_factory
-from accounts.models import Reward
+from accounts.models import Reward, Badge
 from .serializers import PostSerializer, AssetTypeSerializer, CommentSerializer
 
 from rest_framework.views import APIView
@@ -12,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from datetime import datetime
-# Create your views here.
 
 class CommentAPI(APIView):
 
@@ -31,6 +30,11 @@ class CommentAPI(APIView):
                 user=request.user,
                 post=post
             )
+            reward, created = Reward.objects.get_or_create(user=request.user)
+            reward.points += 5  
+            reward.save() 
+
+            self.check_for_badges(reward)
         else:
             comment = Comment.objects.create(
                 msg=request.data['msg'],
@@ -38,6 +42,21 @@ class CommentAPI(APIView):
             )
         serializer_comment = CommentSerializer(comment)
         return Response(serializer_comment.data, status=status.HTTP_200_OK)
+    
+    def check_for_badges(self, reward):
+        if reward.points >= 0 and not reward.badges.filter(name="Newbie Badge").exists():
+            newbie_badge = Badge.objects.get(name="Newbie Badge")
+            reward.badges.add(newbie_badge)
+
+        if reward.points >= 10 and not reward.badges.filter(name="Finder Badge").exists():
+            finder_badge = Badge.objects.get(name="Finder Badge")
+            reward.badges.add(finder_badge)
+
+        if reward.points >= 50 and not reward.badges.filter(name="Active Contributor Badge").exists():
+            active_contributor_badge = Badge.objects.get(name="Active Contributor Badge")
+            reward.badges.add(active_contributor_badge)
+
+        reward.save()
 
 
 class PostAPI(APIView):
@@ -67,7 +86,6 @@ class PostAPI(APIView):
         if search_is_active != '-1':
             posts = posts.filter(is_active=bool(int(search_is_active)))
 
-        # sort by create_at & is_active desc
         posts = posts.order_by('-is_active', '-create_at')
 
         assetTypes = AssetType.objects.all()
@@ -134,16 +152,15 @@ class CreateView(View):
                     reward, created = Reward.objects.get_or_create(user=request.user)
                     reward.points += 10  
                     reward.save()
+                    self.check_for_badges(reward)
             else:
                 post.key = request.POST.get('key')
-                # validate key
                 if (len(post.key) < 6):
                     return render(request, self.template_name, {
                         'form': form,
                         'formset': self.PictureFormSet(),
                         'key_error': 'Please enter a key with at least 6 characters.'
                     })
-                # check if key is used
                 for i in Post.objects.all():
                     if i.key == post.key:
                         return render(request, self.template_name, {
@@ -164,6 +181,21 @@ class CreateView(View):
                 'form': form,
                 'formset': self.PictureFormSet()
             })
+        
+    def check_for_badges(self, reward):
+        if reward.points >= 0 and not reward.badges.filter(name="Newbie Badge").exists():
+            newbie_badge = Badge.objects.get(name="Newbie Badge")
+            reward.badges.add(newbie_badge)
+
+        if reward.points >= 10 and not reward.badges.filter(name="Finder Badge").exists():
+            finder_badge = Badge.objects.get(name="Finder Badge")
+            reward.badges.add(finder_badge)
+
+        if reward.points >= 50 and not reward.badges.filter(name="Active Contributor Badge").exists():
+            active_contributor_badge = Badge.objects.get(name="Active Contributor Badge")
+            reward.badges.add(active_contributor_badge)
+
+        reward.save()
 
 
 class DetailView(View):
@@ -175,9 +207,6 @@ class DetailView(View):
         return render(request, self.template_name, {
             'post': post
         })
-
-    # def post(self, request, post_id): 
-
 
 class EditPostView(View):
     template_name = 'edit_post.html'

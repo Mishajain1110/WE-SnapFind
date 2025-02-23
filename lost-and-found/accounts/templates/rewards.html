@@ -1,40 +1,148 @@
 <!-- templates/rewards.html -->
-
 {% extends 'base_layout.html' %}
 
 {% block title %}My Rewards{% endblock %}
 
 {% block content %}
-<h1>My Rewards</h1>
-<p>You have <strong>{{ rewards.points }}</strong> points.</p>
-
-<h2>Your Badges</h2>
-<div class="badges">
-    {% for badge in rewards.badges.all %}
-        <div class="badge">
-            <img src="{{ badge.image.url }}" alt="{{ badge.name }}">
-            <p>{{ badge.name }}</p>
-        </div>
-    {% empty %}
-        <p>No badges earned yet!</p>
-    {% endfor %}
-</div>
-
 <style>
-.badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.badge {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
+.rewards-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
+
+.rewards-layout {
+    display: flex;
+    align-items: stretch;
+    gap: 30px;
+}
+.main-section {
+    flex: 3;
+    text-align: center;
+}
+.leaderboard {
+    flex: 1;
+    min-height: 400px;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard h2 {
+    background: grey;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 0 0 15px;
+    text-transform: uppercase;
+    text-align: center;
+}
+.leaderboard ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+}
+.leaderboard li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+.rank {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+.username {
+    flex: 1;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+}
+.points {
+    font-weight: bold;
+}
+
+.badges, .upcoming-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+.badge {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    width: 150px;
+    text-align: center;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 .badge img {
-    width: 50px; 
-    height: 50px; 
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
 }
 </style>
+
+<div class="rewards-container">
+    <div class="rewards-layout">
+        <div class="main-section">
+            <h1>My Rewards</h1>
+            <p>You have <strong>{{ rewards.points }}</strong> points.</p>
+
+            <h2>Your Badges</h2>
+            <div class="badges">
+                {% for badge in rewards.badges.all %}
+                    <div class="badge">
+                        <img src="{{ badge.image.url }}" alt="{{ badge.name }}">
+                        <p><strong>{{ badge.name }}</strong></p>
+                    </div>
+                {% empty %}
+                    <p>No badges earned yet!</p>
+                {% endfor %}
+            </div>
+
+            <h2>Upcoming Badges</h2>
+            <div class="upcoming-badges">
+                {% for badge in upcoming_badges %}
+                    <div class="badge">
+                        <img src="{{ badge.image.url }}" alt="{{ badge.name }}">
+                        <p><strong>{{ badge.name }}</strong> ({{ badge.points_required }} pts)</p>
+                    </div>
+                {% empty %}
+                    <p>No upcoming badges!</p>
+                {% endfor %}
+            </div>
+        </div>
+
+         <div class="leaderboard">
+            <h2>Leaderboard</h2>
+            <ol>
+                {% for user in top_users %}
+                    <li>
+                        <span class="rank">#{{ forloop.counter }}</span>
+                        <span class="username" style="font-weight: bold;">{{ user.user.username }}</span>
+                        <span class="points">{{ user.points }} pts</span>
+                    </li>
+                {% empty %}
+                    <li>No leaderboard data available.</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</div>
 {% endblock %}

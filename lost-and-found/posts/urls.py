@@ -9,5 +9,7 @@ urlpatterns = [
     path('delete/<int:post_id>/', delete_view, name='post_delete'),
     path('edit_post/success/<int:post_id>/', EditPostView.as_view(), name='edit_post_success'),
     path('post_api/', PostAPI.as_view(), name='post_api'),
-    path('comment_api/<int:post_id>/', CommentAPI.as_view(), name='comment_api')
+    path('comment_api/<int:post_id>/', CommentAPI.as_view(), name='comment_api'),
+    
+
 ]

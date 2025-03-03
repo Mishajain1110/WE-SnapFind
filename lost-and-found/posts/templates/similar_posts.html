@@ -1,0 +1,94 @@
+{% extends 'base_layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    Lost & Found: Similar Lost Posts
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/tempus.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class='mt-5 mb-5'> <b>Similar Lost Posts <i class="fas fa-search"></i></b> </h1>
+    <p class="lead">Your "found" post: <strong>{{ post.title }}</strong></p>
+
+    <div class="container">
+        {% if similar_posts|length == 0 %}
+            <div class='col-lg-12 jumbotron text-center border border-dark'>
+                <img src="{% static 'images/post.png' %}" width='15%' class='mb-5'>
+                <h4>No similar lost items found.</h4><br>
+                <div>
+                    <a href="{% url 'detail' post.id %}" class='btn btn-primary text-center'>Back to Your Post</a>
+                </div>
+            </div>
+        {% else %}
+        <div class="row">
+            {% for similar_post, similarity in similar_posts %}
+                <div class='col-lg-3 my-3'>
+                    <div class="card h-100 w-100 text-dark mycard" style='border:none;'>
+                        <a class="card h-100 w-100 mb-0 text-decoration-none text-dark"
+                        href="{% url 'detail' similar_post.id %}">
+                            <div class="wrapper">
+                                {% if similar_post.postpicture_set.all|length == 0 %}
+                                    <img class="card-img-top" src="{% static 'images/post_default.gif' %}">
+                                {% else %}
+                                    <img class="card-img-top" src="{{ similar_post.postpicture_set.all.0.picture.url }}">
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <b>{{ similar_post.title|truncatechars:20 }}</b>
+                                </h5>
+                                <div class="card-text">
+                                    <p>{{ similar_post.desc|truncatechars:15 }}</p>
+                                    <p class='m-0'>
+                                        <small>
+                                            <b>Item Type: </b> <span id='assetType'>{{ similar_post.assetType }}</span>
+                                        </small>
+                                    </p>
+                                    <p class='m-0'>
+                                        <small>
+                                            <b>Location: </b> <span id='location'> {{ similar_post.location }} </span>
+                                        </small>
+                                    </p>
+                                    <p class='m-0'>
+                                        <small>
+                                            <b>Date and Time: </b> <span id='date_time'> {{ similar_post.date_time|date:"d/m/Y H:i" }} </span>
+                                        </small>
+                                    </p>
+                                    <p class='m-0'>
+                                        <small>
+                                            <b>Similarity: </b> <span id='similarity'> {{ similarity|floatformat:2 }} </span>
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="container mb-3 ml-1">
+                                <p class="card-text">
+                                    {% if similar_post.type == 'found' %}
+                                        <span class="badge badge-pill badge-success text-light">Found</span>
+                                    {% else %}
+                                        <span class="badge badge-pill badge-danger text-light">Lost</span>
+                                    {% endif %}
+                                    {% if similar_post.is_active == False %}
+                                        <span class="badge badge-pill badge-dark text-light">Closed</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <!-- Add any custom scripts here if needed -->
+{% endblock %}

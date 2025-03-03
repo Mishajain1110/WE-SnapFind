@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostForm, PostPictureForm
 from django.http import JsonResponse
 from .models import Post, PostPicture, AssetType, Comment
@@ -12,6 +12,26 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from datetime import datetime
+# from .utils import compute_similarity
+
+from .utils import find_similar_lost_posts
+'''
+def similar_posts_view(request, post_id):
+    """
+    View to display similar lost posts for a given found post.
+    """
+    # Get the newly created found post
+    post = get_object_or_404(Post, id=post_id)
+
+    # Find similar lost posts
+    lost_posts = Post.objects.filter(type='lost')
+    similar_posts = find_similar_lost_posts(post, lost_posts, threshold=0.7)
+
+    # Render the similar posts template
+    return render(request, 'posts/similar_posts.html', {
+        'post': post,
+        'similar_posts': similar_posts
+    })'''
 
 class CommentAPI(APIView):
 
@@ -174,7 +194,22 @@ class CreateView(View):
                     if picture.is_valid():
                         picture = picture.save(commit=False)
                         picture.post = post
-                        picture.save()
+                        picture.save() 
+
+                # Check for similar lost posts if the new post is a "found" item
+            if post.type == 'found':
+                lost_posts = Post.objects.filter(type='lost')
+                similar_posts = find_similar_lost_posts(post, lost_posts, threshold=0.7)
+
+                # Pass the similar posts to the template or handle as needed
+                return render(request, 'similar_posts.html', {
+                    'post': post,
+                    'similar_posts': similar_posts
+                })
+
+                # Pass the similar posts to the template or handle as needed
+               
+                       
             return redirect('detail', post_id=post.id)
         else:
             return render(request, self.template_name, {

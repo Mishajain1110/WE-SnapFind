@@ -1,49 +1,124 @@
+/* Base styles */
 img {
     max-width: 100%;
 }
 
-.inbox_people {
-    background: #f8f8f8 none repeat scroll 0 0;
-    float: left;
-    overflow: hidden;
-    width: 40%;
-    border-right: 1px solid #c4c4c4;
+/* Full viewport setup */
+html, body {
     height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent window scrollbar */
 }
 
+/* Ensure the container takes full height */
+body > .container, 
+body > .container-fluid {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+}
+
+/* Make the content block fill available space */
+#content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main messaging container */
+.messaging {
+    height: 100%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main chat container with flex layout */
 .inbox_msg {
-    border: 1px solid #c4c4c4;
-    clear: both;
-    overflow: hidden;
     height: 100%;
+    display: flex;
+    border: 1px solid #c4c4c4;
+    overflow: hidden;
 }
 
-.top_spac {
-    margin: 20px 0 0;
+/* Left sidebar - people list */
+.inbox_people {
+    height: 100%;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    background: #f8f8f8;
+    border-right: 1px solid #c4c4c4;
 }
 
+/* Search and header area */
+.headind_srch {
+    flex: 0 0 auto;
+    padding: 10px 15px;
+    border-bottom: 1px solid #c4c4c4;
+}
 
+/* Recent heading styles */
 .recent_heading {
     float: left;
     width: 40%;
-}
-
-.srch_bar {
-    display: inline-block;
-    text-align: right;
-    width: 60%;
-}
-
-.headind_srch {
-    padding: 10px 29px 10px 20px;
-    overflow: hidden;
-    border-bottom: 1px solid #c4c4c4;
 }
 
 .recent_heading h4 {
     color: #05728f;
     font-size: 21px;
     margin: auto;
+}
+
+/* Search bar styles */
+.srch_bar {
+    display: inline-block;
+    text-align: right;
+    width: 60%;
+    margin-top: 10px;
+}
+
+/* Top spacing helper */
+.top_spac {
+    margin: 20px 0 0;
+}
+
+/* Chat user list scrollable area */
+.inbox_chat {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Chat list item */
+.chat_list {
+    border-bottom: 1px solid #c4c4c4;
+    margin: 0;
+    padding: 18px 16px 10px;
+}
+
+/* Active chat highlight */
+.active_chat {
+    background: #ebebeb;
+}
+
+/* Chat user entry styles */
+.chat_people {
+    overflow: hidden;
+    clear: both;
+}
+
+.chat_img {
+    float: left;
+    width: 11%;
+}
+
+.chat_ib {
+    float: left;
+    padding: 0 0 0 15px;
+    width: 88%;
 }
 
 .chat_ib h5 {
@@ -60,43 +135,41 @@ img {
 .chat_ib p {
     font-size: 14px;
     color: #989898;
-    margin: auto
+    margin: auto;
 }
 
-.chat_img {
-    float: left;
-    width: 11%;
+/* Right side message area */
+.mesgs {
+    height: 100%;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
 }
 
-.chat_ib {
-    float: left;
-    padding: 0 0 0 15px;
-    width: 88%;
+/* User info at top of chat */
+.mesgs .container-fluid {
+    flex: 0 0 auto;
+    padding: 10px 15px;
 }
 
-.chat_people {
-    overflow: hidden;
-    clear: both;
+#mesgs_hr_bottom {
+    margin: 5px 0;
 }
 
-.chat_list {
-    border-bottom: 1px solid #c4c4c4;
-    margin: 0;
-    padding: 18px 16px 10px;
-}
-
-.inbox_chat {
-    height: 85%;
+/* Message history with proper scrolling */
+.msg_history {
+    flex: 1;
     overflow-y: auto;
+    position: relative;
+    top: 0;
+    padding: 0 15px 15px;
 }
 
-.active_chat {
-    background: #ebebeb;
-}
-
-.incoming_msg{
+/* Message layout styles */
+.incoming_msg {
     overflow: hidden;
-    margin: 26px 0 26px;
+    margin: 26px 0;
 }
 
 .incoming_msg_img {
@@ -111,14 +184,38 @@ img {
     width: 92%;
 }
 
+.received_withd_msg {
+    width: 57%;
+}
+
 .received_withd_msg p {
-    background: #ebebeb none repeat scroll 0 0;
+    background: #ebebeb;
     border-radius: 3px;
     color: #646464;
     font-size: 14px;
     margin: 0;
     padding: 5px 10px 5px 12px;
     width: 85%;
+}
+
+.outgoing_msg {
+    overflow: hidden;
+    margin: 26px 0;
+}
+
+.sent_msg {
+    float: right;
+    width: 46%;
+}
+
+.sent_msg p {
+    background: #05728f;
+    border-radius: 3px;
+    font-size: 14px;
+    margin: 0;
+    color: #fff;
+    padding: 5px 10px 5px 12px;
+    width: 100%;
 }
 
 .time_date {
@@ -128,35 +225,16 @@ img {
     margin: 8px 0 0;
 }
 
-.received_withd_msg {
-    width: 57%;
-}
-
-.mesgs {
-    float: left;
-    padding: 30px 15px 0 25px;
-    width: 60%;
-    height: 100%;
-}
-
-.sent_msg p {
-    background: #05728f none repeat scroll 0 0;
-    border-radius: 3px;
-    font-size: 14px;
-    margin: 0;
-    color: #fff;
-    padding: 5px 10px 5px 12px;
-    width: 100%;
-}
-
-.outgoing_msg {
-    overflow: hidden;
-    margin: 26px 0 26px;
-}
-
-.sent_msg {
-    float: right;
-    width: 46%;
+/* Message input area at bottom */
+#input_message_box {
+    flex: 0 0 auto;
+    position: relative;
+    top: 0;
+    margin-top: 0 !important;
+    padding: 10px 15px;
+    border-top: 1px solid #c4c4c4;
+    background: #fff;
+    z-index: 5;
 }
 
 .type_msg {
@@ -164,39 +242,7 @@ img {
     position: relative;
 }
 
-/* .msg_send_btn {
-    background: #05728f none repeat scroll 0 0;
-    border: medium none;
-    border-radius: 50%;
-    color: #fff;
-    cursor: pointer;
-    font-size: 17px;
-    height: 33px;
-    position: absolute;
-    right: 0;
-    top: 11px;
-    width: 33px;
-} */
-
-.messaging {
-    padding: 0 0 0 0;
-    height: calc(100% - 75px);
-}
-
-.msg_history {
-    position: relative;
-    top: 7em;
-    height: 80%;
-    overflow-y: auto;
-}
-
-#input_message_box{
-    position: relative;
-    top: 7%
-}
-
-/* Switch Day - Night */
-
+/* Day/Night Toggle Switch Styles */
 .toggle {
     display: block;
     text-align: center;
@@ -228,7 +274,7 @@ img {
     display: block;
 }
 
-/* =================================================== Day/Night toggle buttons =================================================== */
+/* Day/Night toggle button styles */
 .toggle--daynight .toggle--btn, .toggle--like .toggle--btn {
     position: relative;
     height: 70px;
@@ -269,6 +315,7 @@ img {
     transition: opacity 100ms ease-in;
 }
 
+/* Animation for the day/night toggle */
 @keyframes starry_star {
     50% {
         background-color: rgba(255, 255, 255, 0.1);
@@ -355,3 +402,31 @@ img {
     transform: rotate(70deg);
 }
 
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .inbox_people {
+        width: 40%;
+    }
+    
+    .mesgs {
+        width: 60%;
+    }
+}
+
+@media (max-width: 576px) {
+    .inbox_people {
+        width: 35%;
+    }
+    
+    .mesgs {
+        width: 65%;
+    }
+    
+    .headind_srch {
+        padding: 10px;
+    }
+    
+    .inbox_chat {
+        padding: 0;
+    }
+}

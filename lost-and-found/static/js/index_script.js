@@ -26,7 +26,7 @@ $(document).ready(function () {
     let search_location = '';
     let search_assetType = -1;
     let search_date = '';
-    let search_type = -1;
+    // let search_type ="lost";
     let search_is_active = -1;
     let isFirstLoad = true; // Track first API call
 
@@ -58,16 +58,27 @@ $(document).ready(function () {
         search_title = $('#title').val();
         search_location = $('#location').val();
         search_assetType = $('#assetType').val();
-        search_type = $('#type').val();
+        // search_type = $('#type').val();
         search_is_active = $('#is_active').val();
         initialize();
     });
-
+    let search_type = 'lost';
     // Function to fetch and display posts
     function initialize() {
+        let search_type = 'lost';
+        // console.log('Initializing with:', {
+        //     search_title,
+        //     search_location,
+        //     search_assetType,
+        //     search_date,
+        //     search_type,  // Ensure this is always 'lost'
+        //     search_is_active
+        // });
+        console.log('search_type:', search_type);
+
         axios.get('/post_api/', {
             params: {
-                search_title, search_location, search_assetType, search_date, search_type, search_is_active,
+                search_title, search_location, search_assetType, search_date, search_type:'lost', search_is_active,
             },
         })
         .then(function (response) {
@@ -133,7 +144,7 @@ $(document).ready(function () {
     $('#search_title').on('keyup', function() { search_title = $(this).val(); initialize(); });
     $('#search_location').on('keyup', function() { search_location = $(this).val(); initialize(); });
     $('#search_date').on('change', function() { search_date = $(this).val(); initialize(); });
-    $('#search_type').on('change', function() { search_type = $(this).val(); initialize(); });
+    // $('#search_type').on('change', function() { search_type = $(this).val(); initialize(); });
     $('#search_is_active').on('change', function() { search_is_active = $(this).val(); initialize(); });
     $('#assetType').on('change', function() { search_assetType = $(this).val(); initialize(); });
 
@@ -150,7 +161,7 @@ $(document).ready(function () {
         search_location = '';
         search_assetType = -1;
         search_date = '';
-        search_type = -1;
+        // search_type = -1;
         search_is_active = -1;
         initialize();
     }

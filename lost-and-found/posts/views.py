@@ -6,15 +6,19 @@ from django.views import View
 from django.forms import formset_factory
 from accounts.models import Reward, Badge
 from .serializers import PostSerializer, AssetTypeSerializer, CommentSerializer
-
+# from chats.models import ChatSession
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 from datetime import datetime
 # from .utils import compute_similarity
-
+# from chats.models import Chat, Message
 from .utils import find_similar_lost_posts
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.contrib.auth.models import User
 '''
 def similar_posts_view(request, post_id):
     """
@@ -32,6 +36,18 @@ def similar_posts_view(request, post_id):
         'post': post,
         'similar_posts': similar_posts
     })'''
+@login_required
+def start_chat_with_owner(request, user_id):
+    # Get the post owner or return 404 if not found
+    post_owner = get_object_or_404(User, id=user_id)
+
+    # Ensure the current user is not the post owner
+    if post_owner == request.user:
+        return redirect('detail')
+
+    # Redirect to the chat interface with the post owner
+    return redirect('chat_index')
+
 
 class CommentAPI(APIView):
 
@@ -99,6 +115,7 @@ class PostAPI(APIView):
                 assetType=AssetType.objects.get(id=search_assetType))
 
         search_type = request.GET.get('search_type')
+        # search_type = 'lost'
         if search_type != '-1':
             posts = posts.filter(type=search_type)
 

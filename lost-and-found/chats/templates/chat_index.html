@@ -1,5 +1,4 @@
 {% extends 'base_layout.html' %}
-
 {% load static %}
 
 {% block title %}
@@ -13,22 +12,20 @@
 {% block content %}
     <div class="messaging">
         <div class="inbox_msg">
+            <!-- Left Side - User List -->
             <div class="inbox_people">
                 <div class="headind_srch">
                     <div class="recent_heading">
                         <h3 class='mt-2 text-dark' id='header_msg'>
                            <b> Chat <i class="fas fa-comments"></i></b>
                         </h3>
-
                     </div>
-
                     <div class="toggle toggle--daynight float-right mt-3">
                         <input type="checkbox" id="toggle--daynight" class="toggle--checkbox" {% if theme == 'light' %} checked {% endif %}>
                         <label class="toggle--btn m-0" for="toggle--daynight">
                             <span class="toggle--feature"></span>
                         </label>
                     </div>
-
                     <div class="srch_bar mt-2">
                         <div class="form-group">
                             <div class="input-group">
@@ -41,14 +38,16 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="inbox_chat" id='inbox_chat'>
                     <!-- Users Show here -->
                 </div>
             </div>
-            <div class="mesgs" style="height: 100%; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;">
-                <div class="container-fluid p-0 m-0" style="position: relative">
+            
+            <!-- Right Side - Chat Messages -->
+            <div class="mesgs">
+                <!-- Chat Header -->
+                <div class="container-fluid p-0">
                     <div class="row">
                         <div class="col">
                             <div class='my-circle m-0 p-0' style="display: inline-block;">
@@ -61,11 +60,14 @@
                     </div>
                     <hr id='mesgs_hr_bottom'>
                 </div>
+                
+                <!-- Message Area with Scrolling -->
                 <div class="msg_history" id='msg_history'>
                     <!-- Chat Messages (History) -->
-
                 </div>
-                <div class="form-group mt-5" id='input_message_box' style="position: relative; margin-top: auto; padding: 5px; background: #fff; z-index: 10; width: 100%; height: 100px;">
+                
+                <!-- Message Input Area -->
+                <div class="form-group" id='input_message_box'>
                     <div class="input-group">
                         <input type="text" class='form-control' id='send_message_input' placeholder="Type a message...">
                         <div class="input-group-append" style='cursor: pointer;'>

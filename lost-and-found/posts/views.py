@@ -38,16 +38,19 @@ def similar_posts_view(request, post_id):
         'similar_posts': similar_posts
     })'''
 @login_required
-def start_chat_with_owner(request, user_id):
-    # Get the post owner or return 404 if not found
-    post_owner = get_object_or_404(User, id=user_id)
+def start_chat_with_owner(request, post_id):
+     # Get the post object
+    post = get_object_or_404(Post, id=post_id)
 
-    # Ensure the current user is not the post owner
-    if post_owner == request.user:
-        return redirect('detail')
+    # Get the post owner (user)
+    post_owner = post.user
 
-    # Redirect to the chat interface with the post owner
-    return redirect('chat_index')
+    # Ensure the post has an owner and the current user is not the owner
+    if not post_owner or post_owner == request.user:
+        return redirect('detail', post_id=post.id)
+
+    # Redirect to the chat interface with the post owner's user_id
+    return redirect('chat_detail', user_id=post_owner.id)
 
 
 class CommentAPI(APIView):

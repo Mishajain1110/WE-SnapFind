@@ -188,7 +188,7 @@ class CreateView(View):
                 post.user = request.user
                 if post.type == 'found':  
                     reward, created = Reward.objects.get_or_create(user=request.user)
-                    reward.points += 10  
+                    # reward.points += 10  
                     reward.save()
                     self.check_for_badges(reward)
             else:

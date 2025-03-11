@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.views import View
 from .models import Message
 from .serializers import MessageSerializer
-
+from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect
+from django.contrib.auth.models import User
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -106,3 +108,17 @@ class ChatIndexView(View):
         return render(request, self.template_name, {
             'theme' : request.user.chat.theme
         })
+    
+@login_required
+def chat_detail(request, user_id):
+    # Get the post owner (recipient)
+    post_owner = get_object_or_404(User, id=user_id)
+
+    # Ensure the current user is not the post owner
+    if post_owner == request.user:
+        return redirect('index')  # Redirect to the home page or another appropriate view
+
+    # Render the chat interface
+    return render(request, 'chats/chat_detail.html', {
+        'post_owner': post_owner,
+    })

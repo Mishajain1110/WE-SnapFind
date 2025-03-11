@@ -225,8 +225,8 @@
     
                     let postId = this.getAttribute("data-post-id");
                     let finderUsername = prompt("Enter the username of the person who found this item (Leave blank if unknown):");
-    
-                    if (finderUsername !== null) {
+                    let foundPostId = prompt("Enter the post ID of the found item:");
+                    if (finderUsername !== null && foundPostId !== null) {
                         fetch("{% url 'close_post' %}", {
                             method: "POST",
                             headers: {
@@ -235,7 +235,8 @@
                             },
                             body: JSON.stringify({
                                 post_id: postId,
-                                finder_username: finderUsername.trim()
+                                finder_username: finderUsername.trim(),
+                                found_post_id: foundPostId.trim()
                             })
                         })
                         .then(response => response.json())

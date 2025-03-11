@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from datetime import datetime
-# from .utils import compute_similarity
+from .utils import compute_similarity
 # from chats.models import Chat, Message
 from .utils import find_similar_lost_posts
 from django.shortcuts import redirect

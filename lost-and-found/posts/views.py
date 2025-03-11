@@ -20,6 +20,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 '''
+
 def similar_posts_view(request, post_id):
     """
     View to display similar lost posts for a given found post.
@@ -67,7 +68,7 @@ class CommentAPI(APIView):
                 post=post
             )
             reward, created = Reward.objects.get_or_create(user=request.user)
-            reward.points += 5  
+            # reward.points += 5  
             reward.save() 
 
             self.check_for_badges(reward)
@@ -187,7 +188,7 @@ class CreateView(View):
                 post.user = request.user
                 if post.type == 'found':  
                     reward, created = Reward.objects.get_or_create(user=request.user)
-                    reward.points += 10  
+                    # reward.points += 10  
                     reward.save()
                     self.check_for_badges(reward)
             else:
@@ -339,15 +340,20 @@ class EditPostView(View):
             })
 
 
+@login_required
 def delete_view(request, post_id):
-    post = Post.objects.get(id=post_id)
+    post = get_object_or_404(Post, id=post_id)
 
-    if post.key == None and post.user != request.user:  # If the post has no key and the request is not from the creator
+    if post.key is None and post.user != request.user:
         return redirect('index')
-    elif post.key != None:
+    elif post.key is not None:
         key = request.GET.get('key')
-        if post.key != key:  # If the key sent from GET is incorrect
+        if post.key != key:
             return redirect('index')
 
-    post.delete()
+    post.is_active = False  
+    post.save()
+
+    closed_count = Post.objects.filter(user=request.user, is_active=False).count()
     return redirect('my_posts')
+

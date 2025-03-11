@@ -130,9 +130,18 @@
             {% for post in posts %}
                 <div class='col-lg-3 my-3'>
                     <div class="card h-100 w-100 text-dark mycard" style='border:none;'>
-                        <a href="{% url 'post_delete' post.id %}?key={{key}}">
+
+                        {% if post.type == "lost" %}
+                            <a href="#" class="close-post" data-post-id="{{ post.id }}">
                             <img src="{% static 'images/close.png' %}" alt="" class='top-right-btn' width='35px'>
-                        </a>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'post_delete' post.id %}?key={{ key }}">
+                                <img src="{% static 'images/close.png' %}" alt="" class='top-right-btn' width='35px'>
+                            </a>
+                        {% endif %}
+
+                        
                         <a class="card h-100 w-100 mb-0 text-decoration-none text-dark"
                         href="{% if post.is_active == False %} {% url 'detail' post.id %} {% else %} {% url 'edit_post' post.id %} {% endif %}">
                             <div class="wrapper">
@@ -208,4 +217,50 @@
             });
         </script>
     {% endif %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".close-post").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+    
+                    let postId = this.getAttribute("data-post-id");
+                    let finderUsername = prompt("Enter the username of the person who found this item (Leave blank if unknown):");
+    
+                    if (finderUsername !== null) {
+                        fetch("{% url 'close_post' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": getCSRFToken()
+                            },
+                            body: JSON.stringify({
+                                post_id: postId,
+                                finder_username: finderUsername.trim()
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert("Post closed successfully! Reward points updated.");
+                                location.reload();
+                            } else {
+                                alert("Error: " + data.message);
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+                    }
+                });
+            });
+        });
+        function getCSRFToken() {
+            let csrfToken = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+        
+            return csrfToken ? csrfToken : '';
+        }
+        
+    </script>
+    
 {% endblock %}

@@ -10,7 +10,36 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-# Create your views here.
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+import json
+from django.views.decorators.http import require_POST
+
+@csrf_protect 
+@require_POST 
+def close_post(request):
+    try:
+        data = json.loads(request.body)
+        post_id = data.get("post_id")
+        finder_username = data.get("finder_username")
+
+        post = Post.objects.get(id=post_id)
+        post.is_active = False 
+        post.save()
+
+        if finder_username:
+            try:
+                finder = User.objects.get(username=finder_username)
+                reward, created = Reward.objects.get_or_create(user=finder)
+                reward.points += 10
+                reward.save()
+            except User.DoesNotExist:
+                return JsonResponse({"success": False, "message": "User not found!"})
+
+        return JsonResponse({"success": True})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)})
 
 class SignupView(View):
     template_name = 'signup.html'

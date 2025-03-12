@@ -237,3 +237,70 @@ def find_similar_lost_posts(new_post, lost_posts, text_weight=0.5, image_weight=
     similar_posts = sorted(similar_posts, key=lambda x: x[1], reverse=True)
 
     return similar_posts
+
+def find_similar_found_posts(lost_post, found_posts, text_weight=0.5, image_weight=0.5, threshold=0.7):
+    """
+    Find found posts that are similar to the lost post.
+    """
+    similar_posts = []
+
+    lost_picture = PostPicture.objects.filter(post=lost_post).first()
+
+    if not lost_post.desc or lost_post.desc.strip() == "":
+        if lost_picture and lost_picture.picture:
+            lost_post.desc = generate_caption(lost_picture.picture.path)
+
+    lost_text = f"{lost_post.title} : {lost_post.desc}"
+    print(f"Updated lost_post.desc => {lost_post.desc}")
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MEDIA_DIR = os.path.join(BASE_DIR, 'media', 'posts')
+
+    image_dir = MEDIA_DIR
+    input_image_path = lost_picture.picture.path if lost_picture and lost_picture.picture else None
+    image_results = []
+
+    build_feature_database(image_dir)
+
+    faiss_index, image_names = load_faiss_index()
+    print(f"FAISS Index Loaded: {faiss_index is not None}, Image Names: {len(image_names)}")
+
+    if input_image_path and faiss_index:
+        image_results = find_similar_images(input_image_path, faiss_index, image_names)
+        print("\n🔹 Top Matching Images:")
+        for match in image_results:
+            print(f"Image: {match[0]}, Distance: {match[1]:.4f}")
+
+    image_names_list = [match[0] for match in image_results]
+    faiss_distances = [match[1] for match in image_results]
+    image_similarities = normalize_distances(faiss_distances)
+
+    image_similarity_dict = {img: sim for img, sim in zip(image_names_list, image_similarities)}
+
+    print(f"Number of found posts: {len(found_posts)}")
+
+    for found_post in found_posts:
+        found_picture = PostPicture.objects.filter(post=found_post).first()
+
+        if not found_post.desc or found_post.desc.strip() == "":
+            if found_picture and found_picture.picture:
+                found_post.desc = generate_caption(found_picture.picture.path)
+
+        found_text = f"{found_post.title} {found_post.desc}"
+        text_sim = compute_similarity(lost_text, found_text)
+
+        image_sim = 0
+        if found_picture and found_picture.picture:
+            found_image_name = os.path.basename(found_picture.picture.path)
+            image_sim = image_similarity_dict.get(found_image_name, 0)
+
+        combined_similarity = (text_weight * text_sim) + (image_weight * image_sim)
+
+        if combined_similarity > threshold:
+            similar_posts.append((found_post, combined_similarity))
+
+        print(f"Found Post: {found_post.id} | Text Sim: {text_sim:.4f} | Image Sim: {image_sim:.4f} | Combined: {combined_similarity:.4f}")
+
+    similar_posts = sorted(similar_posts, key=lambda x: x[1], reverse=True)
+
+    return similar_posts

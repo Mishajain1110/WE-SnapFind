@@ -12,15 +12,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from datetime import datetime
-from .utils import compute_similarity
+# from .utils import compute_similarity
 # from chats.models import Chat, Message
-from .utils import find_similar_lost_posts
+from .utils import find_similar_lost_posts, find_similar_found_posts
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 '''
-
 def similar_posts_view(request, post_id):
     """
     View to display similar lost posts for a given found post.
@@ -71,7 +70,7 @@ class CommentAPI(APIView):
                 post=post
             )
             reward, created = Reward.objects.get_or_create(user=request.user)
-            # reward.points += 5  
+            reward.points += 5  
             reward.save() 
 
             self.check_for_badges(reward)
@@ -191,7 +190,7 @@ class CreateView(View):
                 post.user = request.user
                 if post.type == 'found':  
                     reward, created = Reward.objects.get_or_create(user=request.user)
-                    # reward.points += 10  
+                    reward.points += 10  
                     reward.save()
                     self.check_for_badges(reward)
             else:
@@ -230,7 +229,16 @@ class CreateView(View):
 
                 # Pass the similar posts to the template or handle as needed
                
-                       
+            if post.type == 'lost':
+                found_posts = Post.objects.filter(type='found')
+                similar_posts = find_similar_found_posts(post, found_posts, threshold=0.7)
+
+                # Pass the similar posts to the template or handle as needed
+                return render(request, 'similar_posts.html', {
+                    'post': post,
+                    'similar_posts': similar_posts
+                })
+                   
             return redirect('detail', post_id=post.id)
         else:
             return render(request, self.template_name, {
@@ -343,20 +351,15 @@ class EditPostView(View):
             })
 
 
-@login_required
 def delete_view(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = Post.objects.get(id=post_id)
 
-    if post.key is None and post.user != request.user:
+    if post.key == None and post.user != request.user:  # If the post has no key and the request is not from the creator
         return redirect('index')
-    elif post.key is not None:
+    elif post.key != None:
         key = request.GET.get('key')
-        if post.key != key:
+        if post.key != key:  # If the key sent from GET is incorrect
             return redirect('index')
 
-    post.is_active = False  
-    post.save()
-
-    closed_count = Post.objects.filter(user=request.user, is_active=False).count()
+    post.delete()
     return redirect('my_posts')
-

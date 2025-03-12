@@ -147,12 +147,12 @@
                 </div>
                 <!-- Chat with Owner Button -->
                 
-                {% if post.user and post.user != request.user %}
+                <!-- {% if post.user and post.user != request.user %}
                 <div class="mt-4">
                     <a href="{% url 'start_chat_with_owner' post.id %}" class="btn btn-primary">
                         <i class="fas fa-comments"></i> Chat with Owner
                     </a>
-                </div>
+                </div> -->
             <!-- {% elif not request.user.is_authenticated %}
                 <div class="mt-4">
                     <p class="text-muted">Please <a href="{% url 'login' %}">log in</a> to chat with the owner.</p>
@@ -264,7 +264,7 @@
     }
 
     function initialize() {
-        axios.get('/comment_api/' + {{post.id}} + '/')
+        axios.get('/comment_api/' + '{{ post.id }}' + '/')
             .then(function (response) {
                 countComment = 0;
                 document.getElementById('comments').innerHTML = '';
@@ -346,7 +346,7 @@
     $('#comment_btn').on('click', function (e) {
         let message = $('#comment_inp').val();
         if (message.trim() !== "") {
-            axios.post('/comment_api/' + {{post.id}} + '/', {
+            axios.post('/comment_api/' + '{{post.id}}' + '/', {
                 msg: message,
             }).then(function (response) {
                 let comment = response.data;

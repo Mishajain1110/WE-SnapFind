@@ -18,38 +18,37 @@ from django.shortcuts import get_object_or_404
 @csrf_protect 
 @require_POST 
 def close_post(request):
-    try:
+    if request.method == "POST":
         data = json.loads(request.body)
         post_id = data.get("post_id")
-        finder_username = data.get("finder_username")
-        found_post_id = data.get("found_post_id")
+        found_through_platform = data.get("found_through_platform", False)
 
-        if not post_id or not found_post_id:
-            return JsonResponse({"error": "Invalid post ID"}, status=400)
+        try:
+            post = Post.objects.get(id=post_id)
+            post.is_active = False 
+            post.save()
 
-        post_id = int(post_id)
-        found_post_id = int(found_post_id)
-        post = get_object_or_404(Post, id=post_id)
-        post.is_active = False
-        post.save()
+            if found_through_platform:
+                finder_username = data.get("finder_username")
+                found_post_id = data.get("found_post_id")
 
-        post2 = get_object_or_404(Post, id=found_post_id)
-        post2.is_active = False
-        post2.save()
+                if finder_username and found_post_id:
+                    try:
+                        finder = User.objects.get(username=finder_username)
+                        reward, created = Reward.objects.get_or_create(user=finder)
+                        reward.points += 10 
+                        reward.save()
+                    except User.DoesNotExist:
+                        return JsonResponse({"success": False, "message": "Finder not found."})
 
-        if finder_username:
-            try:
-                finder = User.objects.get(username=finder_username)
-                reward, created = Reward.objects.get_or_create(user=finder)
-                reward.points += 10
-                reward.save()
-            except User.DoesNotExist:
-                return JsonResponse({"success": False, "message": "User not found!"})
+                return JsonResponse({"success": True, "message": "Post closed successfully! Reward points updated."})
+            
+            return JsonResponse({"success": True, "message": "Post closed successfully."})
 
-        return JsonResponse({"success": True})
+        except Post.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Post not found."})
 
-    except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)})
+    return JsonResponse({"success": False, "message": "Invalid request method."})
 
 class SignupView(View):
     template_name = 'signup.html'

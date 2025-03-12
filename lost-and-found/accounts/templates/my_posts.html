@@ -222,7 +222,11 @@
                         <div class="menu-container">
                             <button class="menu-btn">&#x22EE;</button>
                             <ul class="menu-dropdown">
+                                {% if post.type == "lost" %}
                                 <li><a href="#" class="close-post" data-post-id="{{ post.id }}">Close</a></li>
+                                {% elif post.type == "found" %}
+                                <li><a href="{% url 'post_delete' post.id %}?key={{ key }}">Close</a></li>
+                                {% endif %}
                                 <li><a href="{% url 'edit_post' post.id %}">Edit</a></li>
                                 <li><a href="{% url 'find_similar_posts' post.id %}">Find Similar Posts</a></li>
                             </ul>
@@ -325,14 +329,21 @@
         });
     });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".close-post").forEach(button => {
-                button.addEventListener("click", function (event) {
-                    event.preventDefault();
-    
-                    let postId = this.getAttribute("data-post-id");
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".close-post").forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+
+                let postId = this.getAttribute("data-post-id");
+                let foundThroughPlatform = prompt("Did you find this item through our platform? (Type 'Yes' or 'No')");
+                if (foundThroughPlatform === null) {
+                    return;
+                }
+        
+                if (foundThroughPlatform && foundThroughPlatform.toLowerCase() === "yes") {
                     let finderUsername = prompt("Enter the username of the person who found this item (Leave blank if unknown):");
                     let foundPostId = prompt("Enter the post ID of the found item:");
+    
                     if (finderUsername !== null && foundPostId !== null) {
                         fetch("{% url 'close_post' %}", {
                             method: "POST",
@@ -343,7 +354,8 @@
                             body: JSON.stringify({
                                 post_id: postId,
                                 finder_username: finderUsername.trim(),
-                                found_post_id: foundPostId.trim()
+                                found_post_id: foundPostId.trim(),
+                                found_through_platform: true  
                             })
                         })
                         .then(response => response.json())
@@ -351,23 +363,49 @@
                             if (data.success) {
                                 alert("Post closed successfully! Reward points updated.");
                                 location.reload();
-                            } else {
+                            } 
+                            else {
                                 alert("Error: " + data.message);
                             }
                         })
                         .catch(error => console.error("Error:", error));
                     }
-                });
+                } 
+                else {
+                    fetch("{% url 'close_post' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": getCSRFToken()
+                        },
+                        body: JSON.stringify({
+                            post_id: postId,
+                            found_through_platform: false  
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } 
+                        else {
+                            alert("Error: " + data.message);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                }
             });
         });
-        function getCSRFToken() {
-            let csrfToken = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('csrftoken='))
-                ?.split('=')[1];
-        
-            return csrfToken ? csrfToken : '';
-        }
+    });
+    function getCSRFToken() {
+        let csrfToken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+    
+        return csrfToken ? csrfToken : '';
+    }
+    
         
     </script>
     

@@ -9,13 +9,10 @@ from torchvision import models
 import numpy as np
 import os
 import faiss
-import mysql.connector
+import sqlite3
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor
-from dotenv import load_dotenv
 from sklearn.preprocessing import MinMaxScaler
-
-load_dotenv()
 
 nlp = spacy.load('en_core_web_md')
 
@@ -65,25 +62,18 @@ def extract_features(image_path):
         features = mobilenet_model(image).squeeze().flatten().numpy()  
     return features.astype('float32')
 
-DB_CONFIG = {
-    "host": os.getenv("MYSQL_HOST"),
-    "port": 3306,
-    "user": os.getenv("MYSQL_USER"),
-    "password": os.getenv("MYSQL_PASSWORD"),
-    "database": os.getenv("MYSQL_DATABASE"),
-    "use_pure": True
-}
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "image_features.db")
 
 def create_database():
     """Create table for storing image features"""
     try:
-        conn = mysql.connector.connect(**DB_CONFIG)
+        conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         cur.execute("""
             CREATE TABLE IF NOT EXISTS image_features (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                image_name VARCHAR(255) UNIQUE,
-                feature_vector LONGBLOB
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                image_name TEXT UNIQUE,
+                feature_vector BLOB
             )
         """)
         conn.commit()
@@ -113,19 +103,19 @@ def build_feature_database(directory):
     print(f"Database built with {len(image_files)} images.")
 
 def store_feature_in_db(image_name, features):
-    """Insert image features into MySQL"""
-    conn = mysql.connector.connect(**DB_CONFIG)
+    """Insert image features into sqlite"""
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     feature_bytes = features.tobytes()
-    cur.execute("INSERT INTO image_features (image_name, feature_vector) VALUES (%s, %s) ON DUPLICATE KEY UPDATE feature_vector = VALUES(feature_vector)",
-                (image_name, feature_bytes))
+    cur.execute("INSERT OR REPLACE INTO image_features (image_name, feature_vector) VALUES (?, ?)", 
+            (image_name, feature_bytes))
     conn.commit()
     cur.close()
     conn.close()
 
 def load_features_from_db():
     """Load all stored image features for FAISS indexing"""
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("SELECT image_name, feature_vector FROM image_features")
     rows = cur.fetchall()

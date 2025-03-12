@@ -11,6 +11,4 @@ torch
 torchvision
 Pillow
 faiss-cpu
-mysql-connector-python
-python-dotenv
 scikit-learn

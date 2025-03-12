@@ -36,6 +36,28 @@ def similar_posts_view(request, post_id):
         'post': post,
         'similar_posts': similar_posts
     })'''
+
+def find_similar_posts(request, post_id):
+    """
+    View to display similar posts for a given post.
+    """
+    # Get the post
+    post = get_object_or_404(Post, id=post_id)
+
+    # Find similar posts based on post type
+    if post.type == 'found':
+        lost_posts = Post.objects.filter(type='lost')
+        similar_posts = find_similar_lost_posts(post, lost_posts, threshold=0.7)
+    else:  # post.type == 'lost'
+        found_posts = Post.objects.filter(type='found')
+        similar_posts = find_similar_found_posts(post, found_posts, threshold=0.7)
+
+    # Render the similar posts template
+    return render(request, 'similar_posts.html', {
+        'post': post,
+        'similar_posts': similar_posts
+    })
+
 @login_required
 def start_chat_with_owner(request, post_id):
      # Get the post object

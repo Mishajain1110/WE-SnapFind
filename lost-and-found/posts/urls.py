@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import IndexView, CreateView, DetailView, EditPostView, delete_view, PostAPI, CommentAPI, start_chat_with_owner
+from .views import IndexView, CreateView, DetailView, EditPostView, delete_view, PostAPI, CommentAPI, start_chat_with_owner, find_similar_posts
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
@@ -11,5 +11,7 @@ urlpatterns = [
     path('post_api/', PostAPI.as_view(), name='post_api'),
     path('comment_api/<int:post_id>/', CommentAPI.as_view(), name='comment_api'),
     path('start/<int:post_id>/', start_chat_with_owner, name='start_chat_with_owner'),
+    # Add this to your urlpatterns
+    path('find-similar/<int:post_id>/', find_similar_posts, name='find_similar_posts'),
 
 ]

@@ -8,6 +8,75 @@
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/tempus.css' %}">
+    <style>
+        /* Menu container */
+.menu-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10; /* Ensure it's above other content */
+}
+
+/* Menu button */
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333;
+    padding: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.menu-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Dropdown menu */
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    min-width: 150px;
+    z-index: 20; /* Ensure it's above other content */
+}
+
+.menu-dropdown li {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.menu-dropdown li:hover {
+    background: #f5f5f5;
+}
+
+.menu-dropdown li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+/* Show dropdown when menu button is clicked */
+.menu-container.active .menu-dropdown {
+    display: block;
+}
+
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -131,7 +200,7 @@
                 <div class='col-lg-3 my-3'>
                     <div class="card h-100 w-100 text-dark mycard" style='border:none;'>
 
-                        {% if post.type == "lost" %}
+                        <!-- {% if post.type == "lost" %}
                             <a href="#" class="close-post" data-post-id="{{ post.id }}">
                             <img src="{% static 'images/close.png' %}" alt="" class='top-right-btn' width='35px'>
                             </a>
@@ -139,11 +208,28 @@
                             <a href="{% url 'post_delete' post.id %}?key={{ key }}">
                                 <img src="{% static 'images/close.png' %}" alt="" class='top-right-btn' width='35px'>
                             </a>
-                        {% endif %}
-
+                        {% endif %} -->
+                        <!-- <div class="menu-container">
+                            <button class="menu-btn">&#x22EE;</button>
+                            <ul class="menu-dropdown">
+                                <li><a href="#" class="close-post" data-post-id="{{ post.id }}">Close</a></li>
+                                <li><a href="{% url 'edit_post' post.id %}">Edit</a></li>
+                                <li><a href="{% url 'find_similar_posts' post.id %}">Find Similar Posts</a></li>
+                            </ul>
+                        </div> -->
+                        
+                         <!-- Three-dot menu -->
+                        <div class="menu-container">
+                            <button class="menu-btn">&#x22EE;</button>
+                            <ul class="menu-dropdown">
+                                <li><a href="#" class="close-post" data-post-id="{{ post.id }}">Close</a></li>
+                                <li><a href="{% url 'edit_post' post.id %}">Edit</a></li>
+                                <li><a href="{% url 'find_similar_posts' post.id %}">Find Similar Posts</a></li>
+                            </ul>
+                        </div>
                         
                         <a class="card h-100 w-100 mb-0 text-decoration-none text-dark"
-                        href="{% if post.is_active == False %} {% url 'detail' post.id %} {% else %} {% url 'edit_post' post.id %} {% endif %}">
+                        href="{% if post.is_active == False %} {% url 'detail' post.id %} {% else %} {% url 'detail' post.id %} {% endif %}">
                             <div class="wrapper">
                                 {% if post.postpicture_set.all|length == 0 %}
                                     <img class="card-img-top" src="{% static 'images/post_default.gif' %}">
@@ -222,6 +308,23 @@
         </script>
     {% endif %}
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".menu-btn").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                event.stopPropagation(); // Prevent clicking outside from closing immediately
+                let menuContainer = this.closest(".menu-container");
+                menuContainer.classList.toggle("active");
+            });
+        });
+    
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function () {
+            document.querySelectorAll(".menu-container").forEach(function (menuContainer) {
+                menuContainer.classList.remove("active");
+            });
+        });
+    });
+
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".close-post").forEach(button => {
                 button.addEventListener("click", function (event) {
